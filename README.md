@@ -1,37 +1,47 @@
-# Novel Automation
+# novel-translator-fr
 
-This repository aims to streamline and automate processes related to creating or managing novel-related tasks. It provides scripts, utilities, and potentially integrations with third-party services to handle various stages of novel text processing or publishing.
+Scrapes a web novel chapter and its metadata from novelbin, then translates the chapter into French with Google Gemini.
 
 ## Features
 
-- Automation scripts for repetitive tasks.
-- Tools for text parsing and transformation.
-- Potential integration with external APIs or publishing platforms.
+- Fetches chapter text from `#chr-content` paragraphs.
+- Fetches novel title, genres and description.
+- Translates text to French with `gemini-1.5-flash` and a JSON response schema.
+- Saves the title, chapter title and translated text to `translated_chapter.csv`.
 
-## Getting Started
+## Tech stack
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/faisal-fida/novel-automation.git
-   cd novel-automation
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-   or, if you’re using Python-based scripts:
-   ```bash
-   pip install -r requirements.txt
-   ```
+Python 3, requests, BeautifulSoup4, google-generativeai, python-dotenv.
 
-## Contributing
+## Project structure
 
-- Fork the repository.
-- Create a new branch: `git checkout -b feature/your-feature-name`.
-- Commit your changes: `git commit -m 'Add some feature'`.
-- Push to the branch: `git push origin feature/your-feature-name`.
-- Submit a pull request describing your changes.
+```
+main.py          entry point and CSV output
+scraper.py       NovelScraper (chapter text, novel info)
+translator.py    Translator (Gemini call)
+requirements.txt
+```
+
+## Setup and run
+
+1. `pip install -r requirements.txt`
+2. Create a `.env` file with:
+   - `GEMINI_API_KEY`: your Google Gemini API key.
+3. `python main.py`
+
+## Usage
+
+The chapter and novel URLs are hardcoded in `main()` in `main.py`. Edit `chapter_url` and `novel_url`, then run. The output is `translated_chapter.csv`. The chapter title is written as the fixed text "Chapter 2".
+
+## Status and limitations
+
+- The code is a working sketch, not a polished tool. One chapter per run, no batching or retries.
+- The scraper selectors fit novelbin pages only and may break if the site changes.
+- The Gemini model name is old and may be retired; change it in `translator.py`.
+- On invalid JSON the translator falls back to `eval` on the model output. Treat that as unsafe.
+- Safety filters are set to `BLOCK_NONE`.
+- Respect the source site's terms and copyright.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+MIT
